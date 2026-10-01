@@ -1,0 +1,93 @@
+<app-app-toast></app-app-toast>
+
+<app-page-header title="Administración de rutas" subtitle="Crear, editar y desactivar rutas de aprobación"></app-page-header>
+
+<app-page-toolbar>
+  <p-button label="Nueva ruta" icon="pi pi-plus" (onClick)="abrirNueva()"></p-button>
+  <p-button label="Actualizar" icon="pi pi-refresh" severity="secondary" (onClick)="cargar()"></p-button>
+</app-page-toolbar>
+
+<app-page-content>
+  <app-data-table [columns]="columns" [data]="filas" [globalFilterFields]="['claveRuta','descripcion','activaTexto']">
+    <ng-template #actions let-row>
+      <p-button icon="pi pi-pencil" severity="secondary" [rounded]="true" [text]="true" (onClick)="abrirEditar(row)"></p-button>
+      <p-button icon="pi pi-send" severity="secondary" [rounded]="true" [text]="true" [loading]="row.desplegando" title="Desplegar BPMN en Flowable" (onClick)="desplegarBpmn(row)"></p-button>
+    </ng-template>
+  </app-data-table>
+</app-page-content>
+
+<app-app-dialog [(visible)]="dialogVisible" [title]="tituloDialog" width="80rem">
+  <div class="form-grid">
+    <div>
+      <label for="claveRuta">Código de ruta</label>
+      <input id="claveRuta" pInputText [(ngModel)]="form.claveRuta" [readonly]="editandoId !== null" maxlength="20" placeholder="Ej. 9150" />
+      @if (editandoId !== null) {
+        <small class="field-hint">El código no es editable; para cambiarlo crea una ruta nueva.</small>
+      }
+    </div>
+    <div>
+      <label for="descripcion">Descripción</label>
+      <input id="descripcion" pInputText [(ngModel)]="form.descripcion" maxlength="255" placeholder="Área responsable / titular" />
+    </div>
+    <div class="check-activa">
+      <p-checkbox [(ngModel)]="form.activa" [binary]="true" inputId="activaRuta"></p-checkbox>
+      <label for="activaRuta">Ruta activa (disponible para nuevas solicitudes)</label>
+    </div>
+  </div>
+
+  <div class="editor-head">
+    <h3>Transiciones de la ruta</h3>
+    <p-button label="Agregar transición" icon="pi pi-plus" severity="secondary" [text]="true" (onClick)="agregarFila()"></p-button>
+  </div>
+  <p class="hint">
+    Cada fila describe un avance: desde la <strong>situación actual</strong> hacia la <strong>situación siguiente</strong> (elige
+    "FIN" para terminar la ruta). Las rutas activas deben incluir una transición desde la situación inicial 20 ó 60. Si la
+    transición <strong>solicita contraseña</strong>, quien la ejecute deberá capturar la clave de la situación.
+  </p>
+
+  @if (transiciones.length === 0) {
+    <div class="editor-scroll">
+      <p class="empty">Sin transiciones. Agrega al menos una con el botón superior.</p>
+    </div>
+  } @else {
+    <div class="editor-scroll">
+      <table class="editor-table">
+        <thead>
+          <tr>
+            <th>Situación actual</th>
+            <th>Situación anterior</th>
+            <th>Situación siguiente</th>
+            <th>Solicita contraseña</th>
+            <th class="col-accion"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of transiciones; track $index) {
+            <tr>
+              <td>
+                <p-select [options]="situacionOptions" optionLabel="label" optionValue="value" [(ngModel)]="fila.situacionActualCodigo" placeholder="Selecciona situación"></p-select>
+              </td>
+              <td>
+                <p-select [options]="anteriorOptions" optionLabel="label" optionValue="value" [(ngModel)]="fila.situacionAnteriorCodigo" placeholder="Sin anterior"></p-select>
+              </td>
+              <td>
+                <p-select [options]="siguienteOptions" optionLabel="label" optionValue="value" [(ngModel)]="fila.situacionSiguienteCodigo" placeholder="Selecciona o FIN"></p-select>
+              </td>
+              <td class="col-check">
+                <p-checkbox [(ngModel)]="fila.solicitarPassword" [binary]="true" [inputId]="'pass-' + $index"></p-checkbox>
+              </td>
+              <td class="col-accion">
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [text]="true" (onClick)="quitarFila($index)"></p-button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <div class="dialog-actions">
+    <p-button label="Cancelar" icon="pi pi-times" severity="secondary" (onClick)="cerrarDialog()"></p-button>
+    <p-button label="Guardar ruta" icon="pi pi-save" (onClick)="guardar()" [loading]="guardando"></p-button>
+  </div>
+</app-app-dialog>

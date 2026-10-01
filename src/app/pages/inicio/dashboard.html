@@ -1,0 +1,29 @@
+<app-app-toast></app-app-toast>
+
+<app-page-header title="Inicio" subtitle="Resumen general del sistema"></app-page-header>
+
+<app-page-toolbar>
+  <p-button label="Nueva solicitud" icon="pi pi-plus" routerLink="/solicitudes/nueva"></p-button>
+  <p-button label="Bandeja" icon="pi pi-inbox" severity="secondary" routerLink="/bandeja"></p-button>
+</app-page-toolbar>
+
+<app-page-content>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h4>Rutas activas</h4>
+      <p>{{ resumen.rutas }}</p>
+    </div>
+    <div class="summary-card">
+      <h4>Situaciones de comprobaciones</h4>
+      <p>{{ resumen.situacionesComprobaciones }}</p>
+    </div>
+    <div class="summary-card">
+      <h4>Situaciones de folios</h4>
+      <p>{{ resumen.situacionesFolios }}</p>
+    </div>
+    <div class="summary-card">
+      <h4>Solicitudes registradas</h4>
+      <p>{{ resumen.solicitudes }}</p>
+    </div>
+  </div>
+</app-page-content>

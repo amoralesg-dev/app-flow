@@ -1,0 +1,32 @@
+:root {
+  --surface-ground: #f3f4f6;
+  --surface-card: #ffffff;
+  --card-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Roboto, Arial, sans-serif;
+  background: var(--surface-ground);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.summary-card {
+  background: var(--surface-card);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: var(--card-shadow);
+}
+
+.token-strip {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: .5rem 1rem;
+  flex-wrap: wrap;
+}

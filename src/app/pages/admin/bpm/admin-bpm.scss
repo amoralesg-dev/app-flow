@@ -1,0 +1,71 @@
+.toolbar-filtros {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.check-opcion {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  label {
+    font-weight: 500;
+  }
+}
+
+.select-estado {
+  min-width: 12rem;
+}
+
+.xml-view {
+  max-height: 32rem;
+  overflow: auto;
+  background: var(--surface-ground, #f8f9fa);
+  border: 1px solid var(--surface-border, #e5e7eb);
+  border-radius: 8px;
+  padding: .8rem;
+
+  pre {
+    margin: 0;
+    font-size: .78rem;
+    line-height: 1.35;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+}
+
+.diagrama-img {
+  display: block;
+  max-width: 100%;
+  margin: 0 auto;
+  border: 1px solid var(--surface-border, #e5e7eb);
+  border-radius: 8px;
+}
+
+.cargando {
+  color: var(--text-color-secondary, #6b7280);
+  text-align: center;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .6rem;
+  margin-top: 1.2rem;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

@@ -1,0 +1,15 @@
+<app-app-toast></app-app-toast>
+
+<app-page-header title="Bandeja" subtitle="Vista operativa de solicitudes"></app-page-header>
+
+<app-page-toolbar>
+  <p-button label="Actualizar" icon="pi pi-refresh" (onClick)="cargar()"></p-button>
+</app-page-toolbar>
+
+<app-page-content>
+  <app-data-table [columns]="columns" [data]="solicitudes" [globalFilterFields]="['folio','solicitante','situacionActualDescripcion']">
+    <ng-template #actions let-row>
+      <p-button icon="pi pi-eye" severity="secondary" [rounded]="true" (onClick)="verDetalle(row)"></p-button>
+    </ng-template>
+  </app-data-table>
+</app-page-content>

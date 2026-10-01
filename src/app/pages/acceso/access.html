@@ -1,0 +1,16 @@
+<app-page-header
+  title="Acceso no autorizado"
+  subtitle="Token no válido o expirado">
+</app-page-header>
+
+<app-page-content>
+  <div class="summary-card access-box">
+    <p>El acceso al Sistema de Aprobaciones se otorga desde el Portal Rassini.</p>
+    <p>Solicita un nuevo acceso desde el portal y vuelve a ingresar mediante el enlace autorizado.</p>
+
+    <div class="actions">
+      <p-button label="Ir al Portal" icon="pi pi-external-link" (onClick)="goPortal()"></p-button>
+      <p-button label="Reintentar" severity="secondary" icon="pi pi-refresh" (onClick)="retry()"></p-button>
+    </div>
+  </div>
+</app-page-content>

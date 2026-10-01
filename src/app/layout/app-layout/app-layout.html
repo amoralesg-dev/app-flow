@@ -1,0 +1,14 @@
+<rui-shell [menu]="menu()" (logout)="logout()">
+  <div class="token-strip">
+    <p-chip [label]="'Usuario: ' + (username() || 'Sin identificar')" icon="pi pi-user"></p-chip>
+    @if (hasRoles()) {
+      @for (rol of roles(); track rol) {
+        <p-chip [label]="rol" icon="pi pi-id-card"></p-chip>
+      }
+    } @else {
+      <p-chip label="Sin roles declarados" icon="pi pi-info-circle"></p-chip>
+    }
+  </div>
+
+  <router-outlet />
+</rui-shell>

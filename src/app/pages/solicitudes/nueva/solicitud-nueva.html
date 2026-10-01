@@ -1,0 +1,43 @@
+<app-app-toast></app-app-toast>
+
+<app-page-header title="Nueva solicitud" subtitle="Registro de solicitud de aprobación"></app-page-header>
+
+<app-page-toolbar>
+  <p-button label="Guardar" icon="pi pi-save" (onClick)="crear()"></p-button>
+  <p-button label="Volver" severity="secondary" icon="pi pi-arrow-left" routerLink="/solicitudes"></p-button>
+</app-page-toolbar>
+
+<app-page-content>
+  <div class="summary-card form-grid">
+    <div>
+      <label>Ruta</label>
+      <p-select
+        [options]="rutas"
+        optionLabel="descripcion"
+        optionValue="claveRuta"
+        [(ngModel)]="model.claveRuta"
+        placeholder="Selecciona ruta">
+      </p-select>
+    </div>
+
+    <div>
+      <label>Tipo de solicitud</label>
+      <p-select [options]="tipoSolicitudOptions" optionLabel="label" optionValue="value" [(ngModel)]="model.tipoSolicitud"></p-select>
+    </div>
+
+    <div>
+      <label>Monto</label>
+      <p-inputnumber [(ngModel)]="model.monto" mode="currency" currency="MXN" locale="es-MX"></p-inputnumber>
+    </div>
+
+    <div>
+      <label>Referencia externa</label>
+      <input pInputText [(ngModel)]="model.referenciaExterna" />
+    </div>
+
+    <div class="full">
+      <label>Descripción</label>
+      <textarea pTextarea rows="4" [(ngModel)]="model.descripcion"></textarea>
+    </div>
+  </div>
+</app-page-content>

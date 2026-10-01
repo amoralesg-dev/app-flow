@@ -1,0 +1,118 @@
+<app-app-toast></app-app-toast>
+
+<app-page-header title="Administración BPM" subtitle="Monitor y control de procesos Flowable y sus instancias"></app-page-header>
+
+<app-page-toolbar>
+  <p-selectbutton [(ngModel)]="pestana" [options]="opcionesPestana" optionLabel="label" optionValue="value" (ngModelChange)="cambiarPestana($event)"></p-selectbutton>
+</app-page-toolbar>
+
+@if (pestana === 'procesos') {
+  <app-page-content>
+    <div class="toolbar-filtros">
+      <div>
+        <label class="sr-only" for="filtroProceso">Filtrar proceso</label>
+        <input id="filtroProceso" pInputText [(ngModel)]="filtroProceso" placeholder="Filtrar proceso…" (keyup.enter)="cargarProcesos()" />
+      </div>
+      <div class="check-opcion">
+        <p-checkbox [(ngModel)]="todasVersiones" [binary]="true" inputId="todasVersiones" (onChange)="cargarProcesos()"></p-checkbox>
+        <label for="todasVersiones">Todas las versiones</label>
+      </div>
+      <p-button label="Filtrar" icon="pi pi-search" severity="secondary" (onClick)="cargarProcesos()"></p-button>
+      <p-button label="Actualizar" icon="pi pi-refresh" severity="secondary" (onClick)="cargarProcesos()"></p-button>
+    </div>
+
+    <app-data-table [columns]="columnsProcesos" [data]="procesos" [loading]="procesosCargando" emptyTitle="Sin procesos desplegados" emptySubtitle="Despliega el BPMN de una ruta desde Administración → Rutas.">
+      <ng-template #actions let-row>
+        <p-button icon="pi pi-file-code" [rounded]="true" [text]="true" title="Ver XML" (onClick)="verXml(row)"></p-button>
+        <p-button icon="pi pi-image" [rounded]="true" [text]="true" title="Ver diagrama" (onClick)="verDiagrama(row)"></p-button>
+        @if (row.estadoTexto === 'Suspendida') {
+          <p-button icon="pi pi-play-circle" [rounded]="true" [text]="true" title="Activar proceso" (onClick)="abrirAccion('activar', row)"></p-button>
+        } @else {
+          <p-button icon="pi pi-pause-circle" [rounded]="true" [text]="true" title="Suspender proceso" (onClick)="abrirAccion('suspender', row)"></p-button>
+        }
+      </ng-template>
+    </app-data-table>
+  </app-page-content>
+}
+
+@if (pestana === 'instancias') {
+  <app-page-content>
+    <div class="toolbar-filtros">
+      <div>
+        <label class="sr-only" for="filtroInstancia">Filtrar instancia</label>
+        <input id="filtroInstancia" pInputText [(ngModel)]="filtroInstancia" placeholder="Filtrar por proceso…" (keyup.enter)="cargarInstancias()" />
+      </div>
+      <div>
+        <label class="sr-only" for="estadoInstancia">Estado</label>
+        <p-select [(ngModel)]="estadoInstancia" [options]="opcionesEstado" optionLabel="label" optionValue="value" inputId="estadoInstancia" styleClass="select-estado"></p-select>
+      </div>
+      <p-button label="Filtrar" icon="pi pi-search" severity="secondary" (onClick)="cargarInstancias()"></p-button>
+      <p-button label="Actualizar" icon="pi pi-refresh" severity="secondary" (onClick)="cargarInstancias()"></p-button>
+    </div>
+
+    <app-data-table [columns]="columnsInstancias" [data]="instancias" [loading]="instanciasCargando" [paginator]="true" [rows]="size" [totalRecords]="totalRecords" [lazy]="true" (lazyLoadChange)="onLazyLoadInstancias($event)" emptyTitle="Sin instancias de proceso" emptySubtitle="Ajusta los filtros o crea una solicitud.">
+      <ng-template #actions let-row>
+        <p-button icon="pi pi-external-link" [rounded]="true" [text]="true" title="Ver solicitud" [disabled]="row.solicitudId === undefined || row.solicitudId === null" (onClick)="verSolicitud(row)"></p-button>
+        @if (row.estado === 'ACTIVA') {
+          <p-button icon="pi pi-ban" severity="danger" [rounded]="true" [text]="true" title="Cancelar instancia" (onClick)="abrirCancelar(row)"></p-button>
+        }
+      </ng-template>
+    </app-data-table>
+  </app-page-content>
+}
+
+<app-app-dialog [(visible)]="xmlVisible" [title]="'XML BPMN — ' + xmlProcesoLabel" width="80rem">
+  <div class="xml-view">
+    <pre>{{ xmlContenido }}</pre>
+  </div>
+  @if (xmlCargando) {
+    <p class="cargando">Cargando XML…</p>
+  }
+</app-app-dialog>
+
+<app-app-dialog [(visible)]="diagramaVisible" [title]="'Diagrama — ' + diagramaProcesoLabel" width="75rem">
+  @if (diagramaUrl) {
+    <img [src]="diagramaUrl" alt="Diagrama del proceso" class="diagrama-img" />
+  }
+  @if (diagramaCargando) {
+    <p class="cargando">Generando diagrama…</p>
+  }
+</app-app-dialog>
+
+<app-app-dialog [(visible)]="accionVisible" [title]="(accion === 'suspender' ? 'Suspender proceso ' : 'Activar proceso ') + (accionFila?.key ?? '') + ' v' + (accionFila?.version ?? '')" width="42rem">
+  @if (accion === 'suspender') {
+    <p>
+      Se suspenderá la definición <strong>{{ accionFila?.key }} v{{ accionFila?.version }}</strong>.
+      Las nuevas solicitudes que usen esta ruta no podrán iniciar el proceso mientras esté suspendida.
+    </p>
+    <div class="check-opcion">
+      <p-checkbox [(ngModel)]="accionIncluirInstancias" [binary]="true" inputId="incluirInstancias"></p-checkbox>
+      <label for="incluirInstancias">Suspender también las instancias en ejecución de esta definición</label>
+    </div>
+  } @else {
+    <p>
+      Se reactivará la definición <strong>{{ accionFila?.key }} v{{ accionFila?.version }}</strong>
+      @if (accionIncluirInstancias) {
+        y sus instancias suspendidas
+      }.
+    </p>
+  }
+  <div class="dialog-actions">
+    <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [disabled]="accionEjecutando" (onClick)="accionVisible = false"></p-button>
+    <p-button [label]="accion === 'suspender' ? 'Suspender' : 'Activar'" [icon]="accion === 'suspender' ? 'pi pi-pause-circle' : 'pi pi-play-circle'" [loading]="accionEjecutando" (onClick)="ejecutarAccion()"></p-button>
+  </div>
+</app-app-dialog>
+
+<app-app-dialog [(visible)]="cancelarVisible" [title]="'Cancelar instancia — ' + (cancelarInstancia?.folio ?? '')" width="42rem">
+  <p>
+    Se cancelará la instancia de <strong>{{ cancelarInstancia?.procesoTexto }}</strong> de la ruta
+    <strong>{{ cancelarInstancia?.claveRuta }}</strong>. Si la solicitud está activa quedará cancelada
+    (situación 99) y se registrará el motivo en el historial.
+  </p>
+  <label for="motivoCancelar">Motivo de la cancelación (opcional)</label>
+  <textarea id="motivoCancelar" pTextarea [(ngModel)]="cancelarMotivo" rows="3" maxlength="500" placeholder="Motivo…"></textarea>
+  <div class="dialog-actions">
+    <p-button label="Volver" icon="pi pi-times" severity="secondary" [disabled]="cancelarEjecutando" (onClick)="cancelarVisible = false"></p-button>
+    <p-button label="Cancelar instancia" icon="pi pi-ban" severity="danger" [loading]="cancelarEjecutando" (onClick)="ejecutarCancelacion()"></p-button>
+  </div>
+</app-app-dialog>

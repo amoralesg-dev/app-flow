@@ -1,0 +1,12 @@
+<app-app-toast></app-app-toast>
+
+<app-page-header title="Catálogo de situaciones" subtitle="Consulta de estados por tipo de flujo"></app-page-header>
+
+<app-page-toolbar>
+  <p-select [options]="tipoOptions" optionLabel="label" optionValue="value" [(ngModel)]="tipoFlujo"></p-select>
+  <p-button label="Aplicar" icon="pi pi-filter" (onClick)="cargar()"></p-button>
+</app-page-toolbar>
+
+<app-page-content>
+  <app-data-table [columns]="columns" [data]="situaciones"></app-data-table>
+</app-page-content>

@@ -1,0 +1,62 @@
+<app-app-toast></app-app-toast>
+<app-app-confirm-dialog></app-app-confirm-dialog>
+
+<app-page-header
+  [title]="'Detalle de solicitud ' + (solicitud?.folio || '')"
+  [subtitle]="solicitud?.situacionActualDescripcion || ''">
+</app-page-header>
+
+<app-page-toolbar>
+  <p-button label="Volver" severity="secondary" icon="pi pi-arrow-left" routerLink="/solicitudes"></p-button>
+  <p-button label="Refrescar" icon="pi pi-refresh" (onClick)="recargar()"></p-button>
+</app-page-toolbar>
+
+<app-app-dialog [(visible)]="passwordVisible" title="Transición con contraseña" width="30rem">
+  <div class="form-grid-one">
+    <label>Contraseña de autorización</label>
+    <p-password [(ngModel)]="password" [feedback]="false" [toggleMask]="true"></p-password>
+    <label>Observación</label>
+    <textarea pTextarea rows="3" [(ngModel)]="comentario"></textarea>
+    <div class="dialog-actions">
+      <p-button label="Cancelar" severity="secondary" (onClick)="passwordVisible=false"></p-button>
+      <p-button label="Continuar" (onClick)="ejecutarDesdeDialogo()"></p-button>
+    </div>
+  </div>
+</app-app-dialog>
+
+<app-page-content>
+  @if (solicitud) {
+    <div class="summary-grid">
+      <div class="summary-card"><strong>Ruta:</strong> {{ solicitud.claveRuta }}</div>
+      <div class="summary-card"><strong>Solicitante:</strong> {{ solicitud.solicitante }}</div>
+      <div class="summary-card"><strong>Tipo:</strong> {{ solicitud.tipoSolicitud }}</div>
+      <div class="summary-card"><strong>Creación:</strong> {{ solicitud.fechaCreacion | date:'short' }}</div>
+    </div>
+
+    <div class="summary-card mt">
+      <h4>Transiciones disponibles</h4>
+      <div class="transition-actions">
+        @for (item of transiciones; track $index) {
+          <p-button [label]="labelTransicion(item)" (onClick)="solicitarTransicion(item)"></p-button>
+        }
+        @if (!transiciones.length) {
+          <span>No hay transiciones configuradas para la situación actual.</span>
+        }
+      </div>
+    </div>
+
+    <div class="summary-card mt">
+      <h4>Historial</h4>
+      <p-timeline [value]="historial">
+        <ng-template pTemplate="content" let-item>
+          <div class="timeline-item">
+            <div><strong>{{ item.accion }}</strong> · {{ item.fechaEvento | date:'short' }}</div>
+            <div>Situación {{ item.situacionAnterior || '-' }} → {{ item.situacionNueva }}</div>
+            <div>Usuario: {{ item.usuario || '-' }}</div>
+            <div>{{ item.comentario || 'Sin comentario' }}</div>
+          </div>
+        </ng-template>
+      </p-timeline>
+    </div>
+  }
+</app-page-content>

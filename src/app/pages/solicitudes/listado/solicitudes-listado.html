@@ -1,0 +1,28 @@
+<app-app-toast></app-app-toast>
+
+<app-page-header title="Solicitudes" subtitle="Listado de solicitudes registradas"></app-page-header>
+
+<app-page-toolbar>
+  <p-select [options]="flujoOptions" optionLabel="label" optionValue="value" [(ngModel)]="tipoFlujo" placeholder="Tipo de flujo"></p-select>
+  <input pInputText type="number" [(ngModel)]="situacion" placeholder="Situación" />
+  <p-button label="Buscar" icon="pi pi-search" (onClick)="cargar()"></p-button>
+  <p-button label="Nueva solicitud" icon="pi pi-plus" severity="secondary" routerLink="/solicitudes/nueva"></p-button>
+</app-page-toolbar>
+
+<app-page-content>
+  <app-data-table
+    [columns]="columns"
+    [data]="solicitudes"
+    [paginator]="true"
+    [rows]="rows"
+    [totalRecords]="totalRecords"
+    [loading]="loading"
+    [lazy]="true"
+    [showSearch]="false"
+    (pageChange)="onPage($event)">
+
+    <ng-template #actions let-row>
+      <p-button icon="pi pi-eye" severity="secondary" [rounded]="true" (onClick)="verDetalle(row)"></p-button>
+    </ng-template>
+  </app-data-table>
+</app-page-content>

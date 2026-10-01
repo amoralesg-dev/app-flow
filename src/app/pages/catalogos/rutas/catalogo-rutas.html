@@ -1,0 +1,35 @@
+<app-app-toast></app-app-toast>
+
+<app-page-header title="Catálogo de rutas" subtitle="Consulta de rutas activas y transiciones"></app-page-header>
+
+<app-page-toolbar>
+  <p-button label="Actualizar" icon="pi pi-refresh" (onClick)="cargar()"></p-button>
+</app-page-toolbar>
+
+<app-app-dialog [(visible)]="showDetalle" [title]="'Transiciones de ruta: ' + detalleRuta" width="50rem">
+  @if (transiciones.length) {
+    <div class="summary-card">
+      <ul>
+        @for (item of transiciones; track item.id) {
+          <li>
+            {{ item.situacionActual }} → {{ etiquetaSituacion(item.situacionSiguiente, false) }}
+            @if (item.situacionAnterior !== null && item.situacionAnterior !== undefined) {
+              (desde {{ item.situacionAnterior }})
+            }
+            · Solicita contraseña: {{ item.solicitarPassword ? 'Sí' : 'No' }}
+          </li>
+        }
+      </ul>
+    </div>
+  } @else {
+    <p>No hay transiciones disponibles para esta ruta.</p>
+  }
+</app-app-dialog>
+
+<app-page-content>
+  <app-data-table [columns]="columns" [data]="rutasVisibles" [globalFilterFields]="['claveRuta','descripcion']">
+    <ng-template #actions let-row>
+      <p-button icon="pi pi-eye" severity="secondary" [rounded]="true" (onClick)="verTransiciones(row)"></p-button>
+    </ng-template>
+  </app-data-table>
+</app-page-content>
