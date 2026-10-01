@@ -49,8 +49,5 @@ logs/
 # Editor config
 .editorconfig.local
 
-# Vendor
-vendor/
-
 # Misc
 .abacus.donotdelete
